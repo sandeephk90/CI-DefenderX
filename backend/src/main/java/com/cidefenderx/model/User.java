@@ -1,14 +1,11 @@
 package com.cidefenderx.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class User {
 
     @Id
@@ -41,4 +38,23 @@ public class User {
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
     public enum Role { SECURITY_ADMIN, SOC_ANALYST, AUDITOR, COMPLIANCE_OFFICER }
+
+    public User() {}
+
+    public UUID getId() { return id; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+    public boolean isEnabled() { return enabled; }
+    public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    public OffsetDateTime getLastLogin() { return lastLogin; }
+    public void setLastLogin(OffsetDateTime lastLogin) { this.lastLogin = lastLogin; }
+    public OffsetDateTime getCreatedAt() { return createdAt; }
 }

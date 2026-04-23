@@ -1,9 +1,7 @@
 package com.cidefenderx.ldap;
 
-import com.cidefenderx.repository.ThreatRepository;
-import com.cidefenderx.service.AlertService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
@@ -13,16 +11,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Slf4j
 @Component
-@RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.ldap.enabled", havingValue = "true")
 public class LDAPMonitorScheduler {
 
+    private static final Logger log = LoggerFactory.getLogger(LDAPMonitorScheduler.class);
+
     private final LdapTemplate ldapTemplate;
-    private final ThreatRepository threatRepository;
-    private final EndpointRepository endpointRepository;
-    private final AlertService alertService;
+
+    public LDAPMonitorScheduler(LdapTemplate ldapTemplate) {
+        this.ldapTemplate = ldapTemplate;
+    }
 
     @Scheduled(fixedDelayString = "${cidefenderx.ldap.poll-interval-ms:60000}")
     public void pollActiveDirectory() {
@@ -44,8 +43,6 @@ public class LDAPMonitorScheduler {
 
         log.debug("Domain Admins count: {}", privilegedUsers.size());
 
-        // In production, compare against a snapshot to detect additions/removals
-        // This scaffold logs the current state
         if (privilegedUsers.size() > 5) {
             log.warn("Unusual number of Domain Admin accounts detected: {}", privilegedUsers.size());
         }

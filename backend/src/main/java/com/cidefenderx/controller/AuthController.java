@@ -2,8 +2,6 @@ package com.cidefenderx.controller;
 
 import com.cidefenderx.repository.UserRepository;
 import com.cidefenderx.security.JwtService;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenticationManager authManager;
@@ -23,13 +20,21 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
 
+    public AuthController(AuthenticationManager authManager, JwtService jwtService,
+                          UserDetailsService userDetailsService, UserRepository userRepository) {
+        this.authManager = authManager;
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
+        this.userRepository = userRepository;
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
         authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
+                new UsernamePasswordAuthenticationToken(req.username, req.password));
 
-        var userDetails = userDetailsService.loadUserByUsername(req.getUsername());
-        var user = userRepository.findByUsername(req.getUsername()).orElseThrow();
+        var userDetails = userDetailsService.loadUserByUsername(req.username);
+        var user = userRepository.findByUsername(req.username).orElseThrow();
 
         user.setLastLogin(OffsetDateTime.now());
         userRepository.save(user);
@@ -47,9 +52,8 @@ public class AuthController {
         ));
     }
 
-    @Data
     public static class LoginRequest {
-        private String username;
-        private String password;
+        public String username;
+        public String password;
     }
 }

@@ -6,44 +6,45 @@ import com.cidefenderx.model.Endpoint;
 import com.cidefenderx.repository.EndpointRepository;
 import com.cidefenderx.service.TelemetryService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/agents")
-@RequiredArgsConstructor
 public class AgentController {
+
+    private static final Logger log = LoggerFactory.getLogger(AgentController.class);
 
     private final EndpointRepository endpointRepository;
     private final TelemetryService telemetryService;
 
+    public AgentController(EndpointRepository endpointRepository, TelemetryService telemetryService) {
+        this.endpointRepository = endpointRepository;
+        this.telemetryService = telemetryService;
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody AgentRegisterRequest req) {
         Endpoint endpoint = endpointRepository.findByAgentId(req.getAgentId())
-                .orElse(Endpoint.builder()
-                        .agentId(req.getAgentId())
-                        .registeredAt(OffsetDateTime.now())
-                        .build());
+                .orElseGet(Endpoint::new);
 
+        endpoint.setAgentId(req.getAgentId());
         endpoint.setHostname(req.getHostname());
         endpoint.setIpAddress(req.getIpAddress());
         endpoint.setOsType(parseOsType(req.getOsType()));
         endpoint.setAgentVersion(req.getVersion());
         endpoint.setStatus(Endpoint.EndpointStatus.ONLINE);
         endpoint.setLastSeen(OffsetDateTime.now());
+        if (endpoint.getRegisteredAt() == null) endpoint.setRegisteredAt(OffsetDateTime.now());
         endpointRepository.save(endpoint);
 
         log.info("Agent registered: {} ({})", req.getAgentId(), req.getHostname());
-        return ResponseEntity.ok(Map.of(
-                "status", "registered",
-                "endpointId", endpoint.getId().toString()
-        ));
+        return ResponseEntity.ok(Map.of("status", "registered", "endpointId", endpoint.getId().toString()));
     }
 
     @PostMapping("/heartbeat/{agentId}")

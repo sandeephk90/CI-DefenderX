@@ -1,14 +1,14 @@
 package com.cidefenderx.threat;
 
 import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
-import org.drools.compiler.kie.builder.impl.KieContainerImpl;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.Message;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
@@ -17,9 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Component
 public class DroolsThreatEngine {
+
+    private static final Logger log = LoggerFactory.getLogger(DroolsThreatEngine.class);
 
     private KieContainer kieContainer;
 
@@ -55,27 +56,20 @@ public class DroolsThreatEngine {
     public List<ThreatResult> evaluate(ThreatFact fact) {
         KieSession session = kieContainer.newKieSession();
         List<ThreatResult> results = new ArrayList<>();
-
         try {
-            session.setGlobal("results", results);
             session.insert(fact);
             session.fireAllRules();
-
-            // Collect ThreatResult objects inserted by rules
             session.getObjects(obj -> obj instanceof ThreatResult)
                    .forEach(obj -> results.add((ThreatResult) obj));
-
         } finally {
             session.dispose();
         }
-
         return results;
     }
 
     public List<ThreatResult> evaluateBatch(List<ThreatFact> facts) {
         KieSession session = kieContainer.newKieSession();
         List<ThreatResult> results = new ArrayList<>();
-
         try {
             facts.forEach(session::insert);
             session.fireAllRules();
@@ -84,7 +78,6 @@ public class DroolsThreatEngine {
         } finally {
             session.dispose();
         }
-
         return results;
     }
 }

@@ -1,7 +1,6 @@
 package com.cidefenderx.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -12,7 +11,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "endpoints")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Endpoint {
 
     @Id
@@ -29,8 +27,7 @@ public class Endpoint {
     private String ipAddress;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "os_type", nullable = false,
-            columnDefinition = "os_type")
+    @Column(name = "os_type", nullable = false, columnDefinition = "os_type")
     private OsType osType = OsType.UNKNOWN;
 
     @Column(name = "os_version")
@@ -62,4 +59,49 @@ public class Endpoint {
 
     public enum OsType { WINDOWS, LINUX, MACOS, UNKNOWN }
     public enum EndpointStatus { ONLINE, OFFLINE, ISOLATED, DECOMMISSIONED }
+
+    public Endpoint() {}
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public String getAgentId() { return agentId; }
+    public void setAgentId(String agentId) { this.agentId = agentId; }
+    public String getHostname() { return hostname; }
+    public void setHostname(String hostname) { this.hostname = hostname; }
+    public String getIpAddress() { return ipAddress; }
+    public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
+    public OsType getOsType() { return osType; }
+    public void setOsType(OsType osType) { this.osType = osType; }
+    public String getOsVersion() { return osVersion; }
+    public void setOsVersion(String osVersion) { this.osVersion = osVersion; }
+    public EndpointStatus getStatus() { return status; }
+    public void setStatus(EndpointStatus status) { this.status = status; }
+    public int getRiskScore() { return riskScore; }
+    public void setRiskScore(int riskScore) { this.riskScore = riskScore; }
+    public String getAgentVersion() { return agentVersion; }
+    public void setAgentVersion(String agentVersion) { this.agentVersion = agentVersion; }
+    public OffsetDateTime getLastSeen() { return lastSeen; }
+    public void setLastSeen(OffsetDateTime lastSeen) { this.lastSeen = lastSeen; }
+    public OffsetDateTime getRegisteredAt() { return registeredAt; }
+    public void setRegisteredAt(OffsetDateTime registeredAt) { this.registeredAt = registeredAt; }
+    public List<String> getTags() { return tags; }
+    public void setTags(List<String> tags) { this.tags = tags; }
+    public Map<String, Object> getMetadata() { return metadata; }
+    public void setMetadata(Map<String, Object> metadata) { this.metadata = metadata; }
+
+    public static Builder builder() { return new Builder(); }
+
+    public static class Builder {
+        private final Endpoint e = new Endpoint();
+        public Builder agentId(String v) { e.agentId = v; return this; }
+        public Builder hostname(String v) { e.hostname = v; return this; }
+        public Builder ipAddress(String v) { e.ipAddress = v; return this; }
+        public Builder osType(OsType v) { e.osType = v; return this; }
+        public Builder status(EndpointStatus v) { e.status = v; return this; }
+        public Builder riskScore(int v) { e.riskScore = v; return this; }
+        public Builder agentVersion(String v) { e.agentVersion = v; return this; }
+        public Builder lastSeen(OffsetDateTime v) { e.lastSeen = v; return this; }
+        public Builder registeredAt(OffsetDateTime v) { e.registeredAt = v; return this; }
+        public Endpoint build() { return e; }
+    }
 }

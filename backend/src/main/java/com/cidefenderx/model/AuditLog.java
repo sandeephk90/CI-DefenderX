@@ -1,7 +1,6 @@
 package com.cidefenderx.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -11,7 +10,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "audit_logs")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class AuditLog {
 
     @Id
@@ -40,4 +38,23 @@ public class AuditLog {
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
+
+    public AuditLog() {}
+
+    public Long getId() { return id; }
+    public UUID getUserId() { return userId; }
+    public void setUserId(UUID userId) { this.userId = userId; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getAction() { return action; }
+    public void setAction(String action) { this.action = action; }
+    public String getResource() { return resource; }
+    public void setResource(String resource) { this.resource = resource; }
+    public String getResourceId() { return resourceId; }
+    public void setResourceId(String resourceId) { this.resourceId = resourceId; }
+    public String getIpAddress() { return ipAddress; }
+    public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
+    public Map<String, Object> getDetails() { return details; }
+    public void setDetails(Map<String, Object> details) { this.details = details; }
+    public OffsetDateTime getCreatedAt() { return createdAt; }
 }

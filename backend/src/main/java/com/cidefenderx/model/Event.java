@@ -1,7 +1,6 @@
 package com.cidefenderx.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -11,7 +10,6 @@ import java.util.Map;
 
 @Entity
 @Table(name = "events")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Event {
 
     @Id
@@ -46,4 +44,40 @@ public class Event {
     private OffsetDateTime occurredAt = OffsetDateTime.now();
 
     public enum Severity { LOW, MEDIUM, HIGH, CRITICAL }
+
+    public Event() {}
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Endpoint getEndpoint() { return endpoint; }
+    public void setEndpoint(Endpoint endpoint) { this.endpoint = endpoint; }
+    public String getEventType() { return eventType; }
+    public void setEventType(String eventType) { this.eventType = eventType; }
+    public Severity getSeverity() { return severity; }
+    public void setSeverity(Severity severity) { this.severity = severity; }
+    public String getSource() { return source; }
+    public void setSource(String source) { this.source = source; }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+    public Map<String, Object> getPayload() { return payload; }
+    public void setPayload(Map<String, Object> payload) { this.payload = payload; }
+    public List<String> getTags() { return tags; }
+    public void setTags(List<String> tags) { this.tags = tags; }
+    public OffsetDateTime getOccurredAt() { return occurredAt; }
+    public void setOccurredAt(OffsetDateTime occurredAt) { this.occurredAt = occurredAt; }
+
+    public static Builder builder() { return new Builder(); }
+
+    public static class Builder {
+        private final Event e = new Event();
+        public Builder endpoint(Endpoint v) { e.endpoint = v; return this; }
+        public Builder eventType(String v) { e.eventType = v; return this; }
+        public Builder severity(Severity v) { e.severity = v; return this; }
+        public Builder source(String v) { e.source = v; return this; }
+        public Builder message(String v) { e.message = v; return this; }
+        public Builder payload(Map<String, Object> v) { e.payload = v; return this; }
+        public Builder tags(List<String> v) { e.tags = v; return this; }
+        public Builder occurredAt(OffsetDateTime v) { e.occurredAt = v; return this; }
+        public Event build() { return e; }
+    }
 }
