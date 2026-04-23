@@ -2,7 +2,6 @@ package com.cidefenderx.controller;
 
 import com.cidefenderx.model.Threat;
 import com.cidefenderx.repository.ThreatRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +11,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/threats")
-@RequiredArgsConstructor
 public class ThreatController {
 
     private final ThreatRepository threatRepository;
+
+    public ThreatController(ThreatRepository threatRepository) {
+        this.threatRepository = threatRepository;
+    }
 
     @GetMapping
     public ResponseEntity<Page<Threat>> list(

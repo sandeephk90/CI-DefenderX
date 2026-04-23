@@ -2,7 +2,6 @@ package com.cidefenderx.controller;
 
 import com.cidefenderx.model.Endpoint;
 import com.cidefenderx.repository.EndpointRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +11,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/endpoints")
-@RequiredArgsConstructor
 public class EndpointController {
 
     private final EndpointRepository endpointRepository;
+
+    public EndpointController(EndpointRepository endpointRepository) {
+        this.endpointRepository = endpointRepository;
+    }
 
     @GetMapping
     public ResponseEntity<Page<Endpoint>> list(

@@ -3,7 +3,8 @@ package com.cidefenderx.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,10 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
 
-@Slf4j
 @Service
 public class JwtService {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
     @Value("${cidefenderx.jwt.secret}")
     private String secret;
@@ -41,6 +43,7 @@ public class JwtService {
             String username = extractUsername(token);
             return username.equals(userDetails.getUsername()) && !isExpired(token);
         } catch (JwtException e) {
+            log.warn("JWT validation failed: {}", e.getMessage());
             return false;
         }
     }
