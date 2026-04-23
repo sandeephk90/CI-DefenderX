@@ -1,0 +1,64 @@
+package com.cidefenderx.rules
+
+import com.cidefenderx.threat.ThreatFact;
+import com.cidefenderx.threat.ThreatResult;
+
+rule "Mimikatz Credential Dumping Tool Detected"
+    salience 100
+    when
+        $fact : ThreatFact(
+            eventType == "PROCESS",
+            message matches ".*mimikatz.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Mimikatz Credential Dumping Tool Detected");
+        result.setThreatType("CREDENTIAL_ACCESS");
+        result.setSeverity("CRITICAL");
+        result.setTitle("Mimikatz detected on endpoint");
+        result.setDescription("The credential harvesting tool mimikatz was detected. Immediate containment required.");
+        result.setMitreTechnique("T1003");
+        result.setAttackVector("OS Credential Dumping");
+        result.setRiskScore(99);
+        insert(result);
+end
+
+rule "Meterpreter Shell Detected"
+    salience 100
+    when
+        $fact : ThreatFact(
+            eventType == "PROCESS",
+            message matches ".*meterpreter.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Meterpreter Shell Detected");
+        result.setThreatType("COMMAND_AND_CONTROL");
+        result.setSeverity("CRITICAL");
+        result.setTitle("Meterpreter reverse shell active");
+        result.setDescription("Metasploit Meterpreter process detected. Endpoint is likely compromised and controlled by an attacker.");
+        result.setMitreTechnique("T1059");
+        result.setAttackVector("Command and Scripting Interpreter");
+        result.setRiskScore(99);
+        insert(result);
+end
+
+rule "Network Scanner Tool Detected"
+    salience 80
+    when
+        $fact : ThreatFact(
+            eventType == "PROCESS",
+            message matches ".*nmap.*|.*masscan.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Network Scanner Tool Detected");
+        result.setThreatType("DISCOVERY");
+        result.setSeverity("MEDIUM");
+        result.setTitle("Network scanning tool executed");
+        result.setDescription("A network scanning tool (nmap/masscan) was detected. This may indicate internal reconnaissance.");
+        result.setMitreTechnique("T1046");
+        result.setAttackVector("Network Service Discovery");
+        result.setRiskScore(55);
+        insert(result);
+end

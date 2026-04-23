@@ -1,0 +1,12 @@
+agent_id: "agent-001"
+agent_token: "change-me-in-production"
+backend_url: "http://localhost:8080"
+collect_interval_sec: 30
+
+ldap:
+  host: ""
+  port: 389
+  bind_dn: "cn=reader,dc=corp,dc=local"
+  password: ""
+  base_dn: "dc=corp,dc=local"
+  use_tls: false

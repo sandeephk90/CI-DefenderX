@@ -1,0 +1,64 @@
+package com.cidefenderx.rules
+
+import com.cidefenderx.threat.ThreatFact;
+import com.cidefenderx.threat.ThreatResult;
+
+rule "Domain Admin Group Membership Change"
+    salience 100
+    when
+        $fact : ThreatFact(
+            eventType == "LDAP",
+            message matches ".*PRIVILEGED ACCOUNT CHANGE.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Domain Admin Group Membership Change");
+        result.setThreatType("AD_THREAT");
+        result.setSeverity("CRITICAL");
+        result.setTitle("Privileged AD group membership changed");
+        result.setDescription("A user account was added or modified in a privileged AD group. Verify this change was authorized.");
+        result.setMitreTechnique("T1098");
+        result.setAttackVector("Account Manipulation");
+        result.setRiskScore(90);
+        insert(result);
+end
+
+rule "DCSync Attack Indicator"
+    salience 100
+    when
+        $fact : ThreatFact(
+            eventType == "LDAP",
+            message matches ".*dcsync.*|.*domain replication.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("DCSync Attack Indicator");
+        result.setThreatType("AD_THREAT");
+        result.setSeverity("CRITICAL");
+        result.setTitle("DCSync attack pattern detected");
+        result.setDescription("Domain replication requests from a non-DC account detected. This is a DCSync attack indicator.");
+        result.setMitreTechnique("T1003.006");
+        result.setAttackVector("OS Credential Dumping: DCSync");
+        result.setRiskScore(97);
+        insert(result);
+end
+
+rule "Account Lockout Spike"
+    salience 85
+    when
+        $fact : ThreatFact(
+            eventType == "LDAP",
+            message matches ".*account.*locked.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Account Lockout Spike");
+        result.setThreatType("AD_THREAT");
+        result.setSeverity("HIGH");
+        result.setTitle("AD account lockout detected");
+        result.setDescription("An Active Directory account was locked out. Could indicate brute force or credential stuffing.");
+        result.setMitreTechnique("T1110");
+        result.setAttackVector("Brute Force");
+        result.setRiskScore(65);
+        insert(result);
+end

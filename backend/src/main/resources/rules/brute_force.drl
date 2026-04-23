@@ -1,0 +1,44 @@
+package com.cidefenderx.rules
+
+import com.cidefenderx.threat.ThreatFact;
+import com.cidefenderx.threat.ThreatResult;
+
+rule "SSH Brute Force Detected"
+    salience 90
+    when
+        $fact : ThreatFact(
+            eventType == "SYSLOG",
+            message matches ".*Failed password.*|.*authentication failure.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("SSH Brute Force Detected");
+        result.setThreatType("BRUTE_FORCE");
+        result.setSeverity("HIGH");
+        result.setTitle("SSH brute force attack detected");
+        result.setDescription("Multiple failed SSH authentication attempts detected. A brute force or credential stuffing attack may be underway.");
+        result.setMitreTechnique("T1110.001");
+        result.setAttackVector("Password Guessing");
+        result.setRiskScore(70);
+        insert(result);
+end
+
+rule "Kerberoasting Attempt"
+    salience 100
+    when
+        $fact : ThreatFact(
+            eventType == "LDAP",
+            message matches ".*kerberos.*TGS.*|.*spn.*request.*|.*kerberoast.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Kerberoasting Attempt");
+        result.setThreatType("BRUTE_FORCE");
+        result.setSeverity("CRITICAL");
+        result.setTitle("Kerberoasting attack detected in Active Directory");
+        result.setDescription("Suspicious Kerberos TGS requests for service accounts detected. This is a common indicator of Kerberoasting.");
+        result.setMitreTechnique("T1558.003");
+        result.setAttackVector("Steal or Forge Kerberos Tickets: Kerberoasting");
+        result.setRiskScore(92);
+        insert(result);
+end

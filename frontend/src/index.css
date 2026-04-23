@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-950 text-gray-100 font-sans antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded-full;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-gray-900 rounded-xl border border-gray-800 p-5;
+  }
+
+  .badge-critical { @apply px-2 py-0.5 rounded text-xs font-semibold bg-red-950 text-red-400 border border-red-800; }
+  .badge-high     { @apply px-2 py-0.5 rounded text-xs font-semibold bg-orange-950 text-orange-400 border border-orange-800; }
+  .badge-medium   { @apply px-2 py-0.5 rounded text-xs font-semibold bg-yellow-950 text-yellow-400 border border-yellow-800; }
+  .badge-low      { @apply px-2 py-0.5 rounded text-xs font-semibold bg-green-950 text-green-400 border border-green-800; }
+
+  .status-online   { @apply inline-flex items-center gap-1.5 text-green-400; }
+  .status-offline  { @apply inline-flex items-center gap-1.5 text-gray-500; }
+  .status-isolated { @apply inline-flex items-center gap-1.5 text-amber-400; }
+
+  .btn-primary {
+    @apply px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium transition-colors;
+  }
+  .btn-ghost {
+    @apply px-4 py-2 rounded-lg hover:bg-gray-800 text-gray-300 text-sm transition-colors;
+  }
+  .btn-danger {
+    @apply px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors;
+  }
+}

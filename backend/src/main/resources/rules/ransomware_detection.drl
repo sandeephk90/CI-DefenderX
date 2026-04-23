@@ -1,0 +1,45 @@
+package com.cidefenderx.rules
+
+import com.cidefenderx.threat.ThreatFact;
+import com.cidefenderx.threat.ThreatResult;
+
+rule "File Integrity Violation on Critical Path"
+    salience 100
+    when
+        $fact : ThreatFact(
+            eventType == "FILESYSTEM",
+            tags contains "integrity",
+            severity == "HIGH"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("File Integrity Violation on Critical Path");
+        result.setThreatType("RANSOMWARE");
+        result.setSeverity("CRITICAL");
+        result.setTitle("Critical system file modified: " + $fact.getMessage());
+        result.setDescription("A critical system file was modified unexpectedly. This may indicate ransomware, rootkit, or unauthorized system tampering.");
+        result.setMitreTechnique("T1486");
+        result.setAttackVector("Data Encrypted for Impact / File Modification");
+        result.setRiskScore(90);
+        insert(result);
+end
+
+rule "Mass File Extension Change"
+    salience 95
+    when
+        $fact : ThreatFact(
+            eventType == "FILESYSTEM",
+            message matches ".*\\.encrypted.*|.*\\.locked.*|.*\\.crypt.*|.*\\.wnry.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Mass File Extension Change");
+        result.setThreatType("RANSOMWARE");
+        result.setSeverity("CRITICAL");
+        result.setTitle("Ransomware file extension pattern detected");
+        result.setDescription("Files with known ransomware extensions detected. Endpoint may be actively under ransomware attack.");
+        result.setMitreTechnique("T1486");
+        result.setAttackVector("Data Encrypted for Impact");
+        result.setRiskScore(99);
+        insert(result);
+end

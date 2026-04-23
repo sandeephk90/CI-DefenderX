@@ -1,0 +1,74 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ci-defenderx
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cidefenderx
+    username: cidefenderx
+    password: cidefenderx
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        default_schema: public
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  ldap:
+    urls: ldap://localhost:389
+    base: dc=corp,dc=local
+    username: cn=reader,dc=corp,dc=local
+    password: ""
+    enabled: false
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    enabled: false
+    consumer:
+      group-id: ci-defenderx
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+cidefenderx:
+  jwt:
+    secret: "change-this-to-a-secure-256-bit-secret-in-production"
+    expiration-ms: 86400000   # 24h
+  agent:
+    token-prefix: "Bearer "
+  threat:
+    rules-path: classpath:rules/
+  admin:
+    default-username: admin
+    default-password: admin123
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    com.cidefenderx: DEBUG
+    org.springframework.security: INFO

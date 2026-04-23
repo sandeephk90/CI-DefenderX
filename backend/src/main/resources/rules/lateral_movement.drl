@@ -1,0 +1,45 @@
+package com.cidefenderx.rules
+
+import com.cidefenderx.threat.ThreatFact;
+import com.cidefenderx.threat.ThreatResult;
+
+rule "Suspicious Network Connection to Known C2 Port"
+    salience 100
+    when
+        $fact : ThreatFact(
+            eventType == "NETWORK",
+            tags contains "suspicious",
+            severity == "HIGH"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Suspicious Network Connection to Known C2 Port");
+        result.setThreatType("LATERAL_MOVEMENT");
+        result.setSeverity("HIGH");
+        result.setTitle("Connection to known C2/malicious port: " + $fact.getMessage());
+        result.setDescription("A network connection was established to a port commonly used by malware or C2 frameworks.");
+        result.setMitreTechnique("T1021");
+        result.setAttackVector("Remote Services / Lateral Tool Transfer");
+        result.setRiskScore(80);
+        insert(result);
+end
+
+rule "Pass-the-Hash Indicator"
+    salience 95
+    when
+        $fact : ThreatFact(
+            eventType == "LDAP",
+            message matches ".*NTLM.*anonymous.*|.*pass.the.hash.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Pass-the-Hash Indicator");
+        result.setThreatType("LATERAL_MOVEMENT");
+        result.setSeverity("CRITICAL");
+        result.setTitle("Pass-the-Hash attack pattern detected");
+        result.setDescription("NTLM relay or pass-the-hash attack pattern identified in authentication logs.");
+        result.setMitreTechnique("T1550.002");
+        result.setAttackVector("Use Alternate Authentication Material: Pass the Hash");
+        result.setRiskScore(95);
+        insert(result);
+end

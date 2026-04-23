@@ -1,0 +1,65 @@
+package com.cidefenderx.rules
+
+import com.cidefenderx.threat.ThreatFact;
+import com.cidefenderx.threat.ThreatResult;
+
+rule "Suspicious Privileged Process Execution"
+    salience 100
+    when
+        $fact : ThreatFact(
+            eventType == "PROCESS",
+            tags contains "privileged",
+            tags contains "suspicious"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Suspicious Privileged Process Execution");
+        result.setThreatType("PRIVILEGE_ESCALATION");
+        result.setSeverity("CRITICAL");
+        result.setTitle("Suspicious privileged process detected: " + $fact.getMessage());
+        result.setDescription("A known malicious tool was executed with elevated privileges. Immediate investigation required.");
+        result.setMitreTechnique("T1055");
+        result.setAttackVector("Process Injection / Privilege Escalation");
+        result.setRiskScore(95);
+        insert(result);
+end
+
+rule "Root Shell Access via sudo"
+    salience 90
+    when
+        $fact : ThreatFact(
+            eventType == "SYSLOG",
+            message matches ".*sudo.*root.*session opened.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Root Shell Access via sudo");
+        result.setThreatType("PRIVILEGE_ESCALATION");
+        result.setSeverity("HIGH");
+        result.setTitle("Root session opened via sudo");
+        result.setDescription("A user escalated to root via sudo. Verify this action is authorized.");
+        result.setMitreTechnique("T1548.003");
+        result.setAttackVector("Sudo and Sudo Caching");
+        result.setRiskScore(75);
+        insert(result);
+end
+
+rule "Unauthorized Sudo Command"
+    salience 90
+    when
+        $fact : ThreatFact(
+            eventType == "SYSLOG",
+            message matches ".*sudo.*command not allowed.*"
+        )
+    then
+        ThreatResult result = new ThreatResult();
+        result.setRuleName("Unauthorized Sudo Command");
+        result.setThreatType("PRIVILEGE_ESCALATION");
+        result.setSeverity("MEDIUM");
+        result.setTitle("Unauthorized sudo command attempt");
+        result.setDescription("A user attempted to execute a command not allowed by sudoers configuration.");
+        result.setMitreTechnique("T1548");
+        result.setAttackVector("Abuse Elevation Control Mechanism");
+        result.setRiskScore(60);
+        insert(result);
+end
