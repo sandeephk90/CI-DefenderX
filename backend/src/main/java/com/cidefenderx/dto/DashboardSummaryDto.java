@@ -1,7 +1,9 @@
 package com.cidefenderx.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
@@ -22,8 +24,10 @@ public class DashboardSummaryDto {
     private List<TrendPoint> threatTrend;
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class TrendPoint {
-        private final String date;
-        private final long count;
+        private String date;
+        private long count;
     }
 }
