@@ -24,7 +24,7 @@ public class Event {
     private String eventType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "threat_severity")
+    @Column(nullable = false)
     private Severity severity = Severity.LOW;
 
     private String source;

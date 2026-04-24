@@ -28,7 +28,7 @@ public class Threat {
     private String threatType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "threat_severity")
+    @Column(nullable = false)
     private Severity severity;
 
     @Column(nullable = false)
@@ -38,7 +38,7 @@ public class Threat {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "threat_status")
+    @Column(nullable = false)
     private ThreatStatus status = ThreatStatus.OPEN;
 
     @Column(name = "rule_name")

@@ -27,14 +27,14 @@ public class Endpoint {
     private String ipAddress;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "os_type", nullable = false, columnDefinition = "os_type")
+    @Column(name = "os_type", nullable = false)
     private OsType osType = OsType.UNKNOWN;
 
     @Column(name = "os_version")
     private String osVersion;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "endpoint_status")
+    @Column(nullable = false)
     private EndpointStatus status = EndpointStatus.OFFLINE;
 
     @Column(name = "risk_score", nullable = false)
